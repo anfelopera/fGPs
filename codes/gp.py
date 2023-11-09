@@ -15,20 +15,19 @@ def dmatrix(f):
     return np.sqrt(D)
 
 def GP(r,n):
-    power_spectrum = np.fft.rfft(r)
+    power_spectrum = np.fft.rfftn(r)
     gaussian_white_noise = np.random.normal(0, 1 ,n)
-    return np.fft.irfft(np.sqrt(power_spectrum)*np.fft.rfft(gaussian_white_noise))
+    return np.fft.irfftn(np.sqrt(power_spectrum)*np.fft.rfftn(gaussian_white_noise))
 
 r = np.zeros(n)
 for i in range(n):
-    r[i] = np.exp(-((i-n/2)/n)**2/2)  
-
+    r[i] = np.exp(-100*((i-n/2)/n)**2)  
 
 
 plt.figure(1)
-plt.plot(field)
+plt.plot(GP(r,n))
+#plt.plot(r)
 plt.show()
 
 
 
-R=kernel(dmatrix(),(1,1))
