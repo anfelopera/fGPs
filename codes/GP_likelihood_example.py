@@ -1,4 +1,4 @@
-cwd = os.getcwd()# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 """
 Created on Thu Nov  9 14:54:47 2023
 
@@ -6,13 +6,14 @@ Created on Thu Nov  9 14:54:47 2023
 """
 
 import numpy as np
+import scipy as sp
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 from scipy.spatial.distance import cdist
+import nlopt
 
 
 from likelihood import *
-from scipy.linalg import cholesky, cho_solve
 
 # kernel functions
 def SEKernel(x, y, param):
@@ -65,7 +66,7 @@ def exponentialKernel(x, y, param):
 
 
 # function for generating GP samples
-jitter = 1e-10  # small number to ensure numerical stability (eigenvalues of K can decay rapidly)
+jitter = 1e-5  # small number to ensure numerical stability (eigenvalues of K can decay rapidly)
 def sample(mu, var, jitter, N):
     """Generate N samples from a multivariate Gaussian \mathcal{N}(mu, var)"""
     L = np.linalg.cholesky(var + jitter*np.eye(var.shape[0])) # cholesky decomposition (square root) of covariance matrix
@@ -74,7 +75,7 @@ def sample(mu, var, jitter, N):
 
 # Simulating GP samples
 # GP params
-param = [1, 0.2] # parameters of the GP
+param = np.array([1, 0.2]) # parameters of the GP
 x = np.linspace(0, 1, 20).reshape(-1,1) # vector of inputs
 
 # Conditional GP samples
@@ -89,9 +90,12 @@ plt.plot(x, samples);
 # plt.savefig(r'GPsamples.pdf', bbox_inches='tight', dpi=300);
 
 # Covariance parameter estimation
-param = [1, 0.6] # parameters of the GP
-K2 = SEKernel(x, x, param)
-print(modified_log_likelihood(K2, samples, jitter))
+param = np.array([2, 0.1]) # parameters of the GP
+multistart = 4
+#print(modified_neg_log_likelihood(K2, samples, jitter))
 
-
+print(maximum_likelihood(param, np.array([1e-6, 1e-6]), np.array([10., 10.]),
+                    [0, 1],
+                    jitter,
+                    cov_matrix, x, samples, multistart))
 
