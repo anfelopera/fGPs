@@ -74,28 +74,26 @@ def sample(mu, var, jitter, N):
     return f_post
 
 # Simulating GP samples
-# GP params
+## GP params
 param = np.array([1, 0.2]) # parameters of the GP
 x = np.linspace(0, 1, 20).reshape(-1,1) # vector of inputs
 
-# Conditional GP samples
+## GP sample
 nsamples = 1
 K = SEKernel(x, x, param)
-np.random.seed(9) # (10, 1), (12, 9), 
-samples = sample(0.*x, K, jitter, N=nsamples)
-
-# plot
-plt.plot(x, samples);
-# plt.scatter(X, Y, color = "black"); plt.axis('off')
-# plt.savefig(r'GPsamples.pdf', bbox_inches='tight', dpi=300);
+np.random.seed(0)
+y = sample(0.*x, K, jitter, N=nsamples)
+plt.scatter(x, y);
 
 # Covariance parameter estimation
-param = np.array([2, 0.1]) # parameters of the GP
-multistart = 4
-#print(modified_neg_log_likelihood(K2, samples, jitter))
+param = np.array([2, 0.1]) # initial parameters of the GP
+K2 = SEKernel(x, x, param)
+multistart = 4 # nb of multistarts
 
-print(maximum_likelihood(param, np.array([1e-6, 1e-6]), np.array([10., 10.]),
-                    [0, 1],
-                    jitter,
-                    cov_matrix, x, samples, multistart))
+## checking the likelihood
+print(modified_neg_log_likelihood(K2, y, jitter))
 
+## optimizing the likelihood
+opt_res = maximum_likelihood(param, np.array([1e-6, 1e-6]), np.array([10., 10.]), [0, 1],
+                             jitter, cov_matrix, x, y, multistart, opt_method = "Powell")
+print(opt_res)
