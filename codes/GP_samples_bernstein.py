@@ -10,8 +10,8 @@ def bernstein(t, k, i, combination_coeff):
     return combination_coeff[i][k]*t**k*(1-t)**(N[i]-k)
 
 #Sapmling parameters
-n = 100 # nb of point evaluations of the functional inputs
-N = [400] # nb of Bernstein basis functions used in the approximation
+n = 50 # nb of point evaluations of the functional inputs
+N = [300] # nb of Bernstein basis functions used in the approximation
 d = 500 # nb of points to approximate the L2 norm
 T = np.linspace(0, 1, d) # integrating variable
 

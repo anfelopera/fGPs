@@ -20,9 +20,9 @@ def partition(t,X):
 
 
 #Sapmling parameters
-n = 50
+n = 200
 # N = [10,20,30,40,50,100]
-N = [500]
+N = [1000]
 d = 500
 y = np.linspace(0,1,d) # integrating variable
 
@@ -42,11 +42,12 @@ for i in range(np.size(N)):
         f[j] = np.concatenate(([j/n],np.cos(U[j,0]*Y)*np.exp(-U[j,1]*Y)))
         
     # GP samples
-    K = ker.kernel(param, ker.dmatrix(f))
-    jitter = 1e-10  # small number to ensure numerical stability (eigenvalues of K can decay rapidly)
+    distf = ker.dmatrix(f)
+    K = ker.kernel(param, distf)
+    jitter = 1e-15  # small number to ensure numerical stability (eigenvalues of K can decay rapidly)
     samples[i] = ker.sample(0, K, jitter, N=1)[:,0]
     
-nb_theta1 = nb_theta2 = 20
+nb_theta1 = nb_theta2 = 50
 theta1_vect = np.linspace(0.2, 2.2, nb_theta1)
 theta2_vect = np.linspace(0.2, 2.2, nb_theta2)
 
@@ -55,7 +56,7 @@ for i in range(nb_theta1):
     print(i)
     for j in range(nb_theta2):
         param0 = [theta1_vect[i], theta2_vect[j]]
-        K0 = ker.kernel(param0, ker.dmatrix(f))
+        K0 = ker.kernel(param0, distf)
         loglike_Mat[i,j] = modified_log_likelihood(K0, samples[-1], jitter)
 
 

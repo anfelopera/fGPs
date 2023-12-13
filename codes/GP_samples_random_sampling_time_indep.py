@@ -19,9 +19,9 @@ def partition(t,X):
     return 1
 
 #Sapmling parameters
-n = 50
+n = 100
 # N = [10,20,30,40,50,100]
-N = [50]
+N = [100]
 d = 500
 y = np.linspace(0,1,d) # integrating variable
 
@@ -50,12 +50,13 @@ nb_theta1 = nb_theta2 = 20
 theta1_vect = np.linspace(0.2, 2.2, nb_theta1)
 theta2_vect = np.linspace(0.2, 2.2, nb_theta2)
 
+distf = ker.dmatrix(f)
 loglike_Mat = np.zeros((nb_theta1, nb_theta2))
 for i in range(nb_theta1):
     print(i)
     for j in range(nb_theta2):
         param0 = [theta1_vect[i], theta2_vect[j]]
-        K0 = ker.kernel(param0, ker.dmatrix(f))
+        K0 = ker.kernel(param0, distf)
         loglike_Mat[i,j] = modified_log_likelihood(K0, samples[-1], jitter)
 
 Theta1, Theta2 = np.meshgrid(theta1_vect, theta2_vect)

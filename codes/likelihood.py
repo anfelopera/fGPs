@@ -83,6 +83,7 @@ def modified_log_likelihood(K, y, nugget):
     """
     n = K.shape[0]
     K = K + np.max(np.diag(K)) * nugget * np.eye(n)
+    # K = K + nugget * np.eye(n)
     cK = cholesky(K, lower = False)
     iK = cho_solve((cK, False), np.eye(n))
     return - 2 * np.sum(np.log(np.diag(cK))) - np.sum(y * np.dot(iK, y))
@@ -90,7 +91,7 @@ def modified_log_likelihood(K, y, nugget):
     # return - 2 * np.sum(np.log(np.diag(cR))) - np.sum(alpha * alpha)
 
 def maximum_likelihood_descent(init_theta, theta_inf, theta_sup, ind_active,
-                               nugget, cov_matrix_function, x, y, opt_method):
+                               nugget, cov_matrix_function, x, y, opt_method, disp = False):
     """
     Perform maximum likelihood estimation using gradient descent.
 
@@ -126,7 +127,7 @@ def maximum_likelihood_descent(init_theta, theta_inf, theta_sup, ind_active,
         # method = "Nelder-Mead",
         bounds = list(zip(theta_inf, theta_sup)),
         args=(ind_active, init_theta, nugget, cov_matrix_function, x, y),
-        options={'disp': True} 
+        options={'disp': disp} 
     )
 
     hat_param = np.copy(init_theta)
@@ -166,7 +167,7 @@ def maximum_likelihood(init_theta, theta_inf, theta_sup, ind_active,
                 size = len(theta_inf[ind_active])
                 ) * (theta_sup - theta_inf)[ind_active]
             
-        print("Multistart #", i+1, "/", k, "- Initial parameters:", init_theta)
+        # print("Multistart #", i+1, "/", k, "- Initial parameters:", init_theta)
         
         res_opt = maximum_likelihood_descent(
             init_theta, theta_inf, theta_sup, ind_active,
@@ -175,7 +176,7 @@ def maximum_likelihood(init_theta, theta_inf, theta_sup, ind_active,
 
         m_hat_theta[i, :] = res_opt["hat_theta"]
         v_val[i] = res_opt["val"]
-        print()
+        # print()
 
     max_index = np.argmax(v_val)
     hat_theta = m_hat_theta[max_index , :]

@@ -65,7 +65,7 @@ def exponentialKernel(x, y, param):
 
 
 # function for generating GP samples
-jitter = 1e-5  # small number to ensure numerical stability (eigenvalues of K can decay rapidly)
+jitter = 1e-12  # small number to ensure numerical stability (eigenvalues of K can decay rapidly)
 def sample(mu, var, jitter, N):
     """Generate N samples from a multivariate Gaussian \mathcal{N}(mu, var)"""
     L = np.linalg.cholesky(var + jitter*np.eye(var.shape[0])) # cholesky decomposition (square root) of covariance matrix
@@ -74,20 +74,21 @@ def sample(mu, var, jitter, N):
 
 # Simulating GP samples
 ## GP params
-param = np.array([1, 0.2]) # parameters of the GP
-x = np.linspace(0, 1, 20).reshape(-1,1) # vector of inputs
+nobs = 100
+param = np.array([2, 0.2]) # parameters of the GP
+x = np.linspace(0, 1, nobs).reshape(-1,1) # vector of inputs
 
 ## GP sample
-nsamples = 1
+# nsamples = 1
 K = SEKernel(x, x, param)
 np.random.seed(0)
-y = sample(0.*x, K, jitter, N=nsamples)
+y = sample(0.*x, K, jitter, N = 1)
 plt.scatter(x, y);
 
 # Covariance parameter estimation
-param0 = np.array([2, 0.1]) # initial parameters of the GP
-K2 = SEKernel(x, x, param)
-multistart = 4 # nb of multistarts
+param0 = np.array([1, 0.5]) # initial parameters of the GP
+K2 = SEKernel(x, x, param0)
+multistart = 10 # nb of multistarts
 
 ## checking the likelihood
 print(modified_log_likelihood(K2, y, jitter))
