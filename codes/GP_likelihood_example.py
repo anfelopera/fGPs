@@ -12,7 +12,6 @@ import matplotlib.pyplot as plt
 from scipy.spatial.distance import cdist
 import nlopt
 
-
 from likelihood import *
 
 # kernel functions
@@ -86,14 +85,14 @@ y = sample(0.*x, K, jitter, N=nsamples)
 plt.scatter(x, y);
 
 # Covariance parameter estimation
-param = np.array([2, 0.1]) # initial parameters of the GP
+param0 = np.array([2, 0.1]) # initial parameters of the GP
 K2 = SEKernel(x, x, param)
 multistart = 4 # nb of multistarts
 
 ## checking the likelihood
-print(modified_neg_log_likelihood(K2, y, jitter))
+print(modified_log_likelihood(K2, y, jitter))
 
 ## optimizing the likelihood
-opt_res = maximum_likelihood(param, np.array([1e-6, 1e-6]), np.array([10., 10.]), [0, 1],
-                             jitter, cov_matrix, x, y, multistart, opt_method = "Powell")
+opt_res = maximum_likelihood(param0, np.array([1e-6, 1e-6]), np.array([10., 10.]), [0, 1],
+                             jitter, cov_matrix_function, x, y, multistart, opt_method = "Powell")
 print(opt_res)
