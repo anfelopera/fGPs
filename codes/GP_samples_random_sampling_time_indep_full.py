@@ -44,8 +44,10 @@ for k in range(np.size(N)):
     for l in range(nb_reps):
         print("Replicate:", l, end = " ")
         # Time independent Samples
+        np.random.seed(k+l)
         x = np.random.rand(N[k], 1) # vector of sample points 
         Y = np.array([partition(t, np.sort(x, axis=None)) for t in T])
+        np.random.seed(k+l)
         U = np.random.rand(n, 2)
         f = np.zeros((n, d+1))
         for j in range(n):
@@ -54,7 +56,7 @@ for k in range(np.size(N)):
         ## Generating GP samples
         distf = ker.dmatrix(f) # distances between functional inputs
         K0 = ker.kernel(param0, ker.dmatrix(f)) # covariance matrix
-        #np.random.seed(k)
+        np.random.seed(k+l)
         samples = ker.sample(0, K0, jitter, N=1)[:,0] # matrix with samples
         
         ## Computing the log-likelihood landscape
