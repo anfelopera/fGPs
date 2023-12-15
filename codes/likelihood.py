@@ -82,8 +82,8 @@ def modified_log_likelihood(K, y, nugget):
     - float: The modified log likelihood value.
     """
     n = K.shape[0]
-    K = K + np.max(np.diag(K)) * nugget * np.eye(n)
-    # K = K + nugget * np.eye(n)
+    # K = K + np.max(np.diag(K)) * nugget * np.eye(n)
+    K = K + nugget * np.eye(n)
     cK = cholesky(K, lower = False)
     iK = cho_solve((cK, False), np.eye(n))
     return - 2 * np.sum(np.log(np.diag(cK))) - np.sum(y * np.dot(iK, y))
