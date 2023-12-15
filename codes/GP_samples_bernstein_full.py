@@ -23,7 +23,7 @@ nb_reps = 10        # np of random replicates
 n = 50             # nb of evaluations of the functional inputs
 N = np.array([50, 100]) # nb of basis functions used in the approximation
 d = 500             # nb of points to approximate the L2 norm
-param0 = np.array([1, 0.7])         # GP covariance parameters
+param0 = np.array([2, 1])         # GP covariance parameters
 param_init = np.array([0.2, 0.2])   # GP covariance parameters
 param_lb = np.array([1e-6, 1e-6])   # parameters' lower bound
 param_ub = np.array([5., 5.]) # parameters' upper bound
@@ -64,7 +64,7 @@ for k in range(np.size(N)):
             nb_theta1 = nb_theta2 = 50 # nb grid evaluations
             theta1_vect = np.linspace(0.1, 2, nb_theta1)
             theta2_vect = np.linspace(0.1, 2, nb_theta2)
-            Theta1, Theta2 = np.meshgrid(theta1_vect, theta2_vect)
+            Theta2, Theta1 = np.meshgrid(theta2_vect, theta1_vect)
             
             loglike_Mat = np.zeros((nb_theta1, nb_theta2))
             for i in range(nb_theta1):
@@ -84,6 +84,7 @@ for k in range(np.size(N)):
             ax.scatter(param0[0], param0[1]) # true parameters
             idxOpt = np.argmax(loglike_Mat)
             ax.scatter(Theta1.flatten()[idxOpt], Theta2.flatten()[idxOpt]) # estimated 
+            plt.show()
             
         # MLE
         opt_res = maximum_likelihood(param_init, param_lb, param_ub, [0, 1], jitter,
@@ -92,7 +93,6 @@ for k in range(np.size(N)):
         if verbose:
             print(results[l, :])
         print()
-        idx += 1
 
     np.save((expName + "N" + str(N[k])), results)
     # results_load = np.load((expName + "N" + str(N[k]) + ".npy"))

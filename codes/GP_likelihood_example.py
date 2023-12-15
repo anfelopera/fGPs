@@ -75,7 +75,7 @@ def sample(mu, var, jitter, N):
 # Simulating GP samples
 ## GP params
 nobs = 100
-param = np.array([2, 0.2]) # parameters of the GP
+param = np.array([1, 0.4]) # parameters of the GP
 x = np.linspace(0, 1, nobs).reshape(-1,1) # vector of inputs
 
 ## GP sample
@@ -96,4 +96,4 @@ print(modified_log_likelihood(K2, y, jitter))
 ## optimizing the likelihood
 opt_res = maximum_likelihood(param0, np.array([1e-6, 1e-6]), np.array([10., 10.]), [0, 1],
                              jitter, cov_matrix_function, x, y, multistart, opt_method = "Powell")
-print(opt_res)
+print(opt_res["hat_theta"])
