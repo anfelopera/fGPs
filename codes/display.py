@@ -8,16 +8,17 @@ import os
 mpl.rc('text', usetex = True) #needed for TeX support in graphs
 sns.set_theme(style="ticks") #Seaborn style - not needed ?
 
-os.chdir("./data_samples") #simulation within this folder must be stored as "GP_samples_Nk.npy" with k an integer
+#os.chdir("./data_samples") #simulation within this folder must be stored as "GP_samples_Nk.npy" with k an integer
 #and only contain simulation results for one type (either fixed sampling points, random but time independent sampling points,
 # time varying sampling points or Bernstein)
-files = os.listdir()
+data_folder = "./data_samples/"
+files = os.listdir(data_folder)
 
 data = []
 
 for s in files: #loads the simulation results
     N = (s.split("_"))[-1][:-4][1:] #eliminates the part 'GP_samples_N' as well as the extension   
-    data = data + [np.load(s)]
+    data = data + [np.load(data_folder + s)]
 data = np.concatenate(data)
 
 df = pd.DataFrame(data, columns=['theta_1', 'theta_2', 'N']) #dataframe storing all the simulation result
@@ -41,7 +42,7 @@ for i,N in enumerate(df['N'].unique()):#for each value of N, we plot a histogram
     ax = sns.histplot((df.loc[df['N'] == N])['theta_1'])
     ax.set_xlabel(r'$\theta_1$')
     ax.set_ylabel("Frequency density")
-    ax.axvline(x = 1,ymin = 0, ymax = 1, ls='--', c='black',lw=1) 
+    ax.axvline(x = 2, ymin = 0, ymax = 1, ls='--', c='black',lw=1) 
     #plt.savefig('histplot_theta_1_N_'+str(N)+'.png')
     plt.show()
     
@@ -50,7 +51,7 @@ for i,N in enumerate(df['N'].unique()):#for each value of N, we plot a histogram
     ax = sns.histplot((df.loc[df['N'] == N])['theta_2'])
     ax.set_xlabel(r'$\theta_2$')
     ax.set_ylabel("Frequency density")
-    ax.axvline(x = 0.7,ymin = 0, ymax = 1, ls='--', c='black',lw=1) 
+    ax.axvline(x = 1, ymin = 0, ymax = 1, ls='--', c='black',lw=1) 
     #plt.savefig('histplot_theta_2_N_'+str(N)+'.png')
     plt.show()
     
