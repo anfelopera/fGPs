@@ -42,7 +42,7 @@ for i,N in enumerate(df['N'].unique()):#for each value of N, we plot a histogram
     ax = sns.histplot((df.loc[df['N'] == N])['theta_1'])
     ax.set_xlabel(r'$\theta_1$')
     ax.set_ylabel("Frequency density")
-    ax.axvline(x = 1,ymin = 0, ymax = 1, ls='--', c='black',lw=1) 
+    ax.axvline(x = 2, ymin = 0, ymax = 1, ls='--', c='black',lw=1) 
     #plt.savefig('histplot_theta_1_N_'+str(N)+'.png')
     plt.show()
     
@@ -51,7 +51,7 @@ for i,N in enumerate(df['N'].unique()):#for each value of N, we plot a histogram
     ax = sns.histplot((df.loc[df['N'] == N])['theta_2'])
     ax.set_xlabel(r'$\theta_2$')
     ax.set_ylabel("Frequency density")
-    ax.axvline(x = 0.7,ymin = 0, ymax = 1, ls='--', c='black',lw=1) 
+    ax.axvline(x = 1, ymin = 0, ymax = 1, ls='--', c='black',lw=1) 
     #plt.savefig('histplot_theta_2_N_'+str(N)+'.png')
     plt.show()
     

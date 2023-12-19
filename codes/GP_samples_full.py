@@ -6,9 +6,9 @@ from utils import *
 import kernel as ker
 
 #Sampling parameters
-nb_reps = 10                        # np of random replicates
-n = 100                             # nb of evaluations of the functional inputs
-N = np.array([50, 100])             # nb of basis functions used in the approximation
+nb_reps = 100                       # np of random replicates
+n = 50                              # nb of evaluations of the functional inputs
+N = np.array([50, 100, 200])        # nb of basis functions used in the approximation
 d = 500                             # nb of points to approximate the L2 norm
 param0 = np.array([2, 1])           # GP covariance parameters
 param_init = np.array([0.2, 0.2])   # GP covariance parameters
@@ -55,7 +55,8 @@ for k in range(np.size(N)):
             nbgrid = 50
             landscape(modified_log_likelihood, ker.kernel, distf, samples,
                       jitter, nbgrid, param0, param_lb, param_ub, opt_res["hat_theta"])
-
+    
+    results = np.vstack((np.append(param0, np.nan), results)) # stacking the ground truth params
     np.save((expName + "n" + str(n) + "_N" + str(N[k])), results)
     # results_load = np.load((expName + "N" + str(N[k]) + ".npy"))
     

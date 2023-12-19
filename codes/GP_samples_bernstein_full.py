@@ -60,5 +60,6 @@ for k in range(np.size(N)):
             landscape(modified_log_likelihood, ker.kernel, distf, samples,
                       jitter, nbgrid, param0, param_lb, param_ub, opt_res["hat_theta"])
 
+    results = np.vstack((np.append(param0, np.nan), results)) # stacking the ground truth params
     np.save((expName + "n" + str(n) + "_N" + str(N[k])), results)
     # results_load = np.load((expName + "N" + str(N[k]) + ".npy"))
