@@ -8,16 +8,17 @@ import os
 mpl.rc('text', usetex = True) #needed for TeX support in graphs
 sns.set_theme(style="ticks") #Seaborn style - not needed ?
 
-os.chdir("./data_samples") #simulation within this folder must be stored as "GP_samples_Nk.npy" with k an integer
+#os.chdir("./data_samples") #simulation within this folder must be stored as "GP_samples_Nk.npy" with k an integer
 #and only contain simulation results for one type (either fixed sampling points, random but time independent sampling points,
 # time varying sampling points or Bernstein)
-files = os.listdir()
+data_folder = "./data_samples/"
+files = os.listdir(data_folder)
 
 data = []
 
 for s in files: #loads the simulation results
     N = (s.split("_"))[-1][:-4][1:] #eliminates the part 'GP_samples_N' as well as the extension   
-    data = data + [np.load(s)]
+    data = data + [np.load(data_folder + s)]
 data = np.concatenate(data)
 
 df = pd.DataFrame(data, columns=['theta_1', 'theta_2', 'N']) #dataframe storing all the simulation result
