@@ -31,18 +31,20 @@ nlist = np.sort(df['n'].dropna().unique())
 Nlist = np.sort(df['N'].dropna().unique())
 for j,n in enumerate(nlist): # for each value of n and N, we plot a boxplot for both theta_1 and theta_2 and we save it   
     for i,N in enumerate(Nlist): 
-        df_N = df.loc[(df['n'] == n) & (df['N'] == N)]        
-        # df_N = df.loc[(df['n'] == n) & (df['N'] == N) & (df['theta_1'] <= 4)]
+        df_N = df.loc[(df['n'] == n) & (df['N'] == N) & (df['theta_1'] < 3)]        
+        df_N2 = df.loc[(df['n'] == n) & (df['N'] == N) & (df['theta_1'] >= 3)]
         plt.figure()
         plt.title(r'$n = ' + str(int(n)) +  ', N = ' + str(int(N)) + '$')
-        ax = sns.boxplot(df_N[['theta_1','theta_2']], width=.15, whis=(5,95))
+        # ax = sns.boxplot(df_N[['theta_1','theta_2']], width=.15, whis=(5,95))
+        ax = sns.violinplot(data=df_N[['theta_1', 'theta_2']], alpha = 0.7)
+        sns.stripplot(data=df_N2[['theta_1', 'theta_2']], jitter = 0.02, color='black', alpha=0.3)
         ax.set_xticklabels([r'$\theta _1$',r'$\theta _2$'])
         # ax.set_xlabel("Covariance parameters")
         # ax.set_ylabel("Estimated paramaters")
         ax.set_ylim([0, 4])
         ax.yaxis.grid('True')
-        ax.axhline(y = data[0, 0], xmin = 0.1, xmax = 0.4, ls='--', c='red', lw = 1.5)
-        ax.axhline(y = data[0, 1], xmin = 0.6, xmax = 0.9, ls='--', c='red', lw = 1.5)
+        ax.axhline(y = data[0, 0], xmin = 0.02, xmax = 0.48, ls='--', c='red', lw = 1.2)
+        ax.axhline(y = data[0, 1], xmin = 0.52, xmax = 0.98, ls='--', c='red', lw = 1.2)
         #plt.savefig('boxplot_n' + n + '_N' + str(N) + '.png')
         plt.show()
     
