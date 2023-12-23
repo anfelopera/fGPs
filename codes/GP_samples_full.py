@@ -7,13 +7,13 @@ import kernel as ker
 
 #Sampling parameters
 nb_reps = 1000                      # np of random replicates
-n = 40                              # nb of evaluations of the functional inputs
-N = np.array([10, 20, 40])         # nb of basis functions used in the approximation
+n = 10                              # nb of evaluations of the functional inputs
+N = np.array([10, 20, 40, 80, 160]) # nb of basis functions used in the approximation
 d = 500                             # nb of points to approximate the L2 norm
 param0 = np.array([1., 0.5])        # GP covariance parameters
 param_init = np.array([0.2, 0.2])   # GP covariance parameters
 param_lb = np.array([1e-1, 1e-1])   # parameters' lower bound
-param_ub = np.array([10., 10.])       # parameters' upper bound
+param_ub = np.array([10., 10.])     # parameters' upper bound
 jitter = 1e-12                      # jitter to ensure numerical stability for inversions
 multistart = 5                      # nb of multistarts
 
