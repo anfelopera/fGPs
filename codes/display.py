@@ -15,8 +15,9 @@ palette = sns.color_palette()   # To use the default color palette
 
 dir_names = os.listdir("./data_samples/")
 
-expIdx = 3
+expIdx = 0
 data_folder = "./data_samples/" + dir_names[expIdx] + "/"
+print(data_folder)
 files = os.listdir(data_folder)
 
 data = []
@@ -25,7 +26,9 @@ for s in files: # loads the simulation results
     n = (s.split("_"))[-2][1:]
     data = data + [np.load(data_folder + s)]
 data = np.concatenate(data)
-df = pd.DataFrame(data, columns=['theta_1', 'theta_2', 'n', 'N']) #dataframe storing all the simulation result
+df = pd.DataFrame(data, columns=['theta_1', 'theta_2', 'M_11', 'M_12', 'M_21', 'M_22', 'n', 'N']) #dataframe storing all the simulation result
+df['renorm_diff_1'] = [(d[2]*(d[0]-data[0,0]) + d[4]*(d[1]-data[0,1])) for d in df.to_numpy()]
+df['renorm_diff_2'] = [(d[3]*(d[0]-data[0,0]) + d[5]*(d[1]-data[0,1])) for d in df.to_numpy()]
 
 nlist = np.sort(df['n'].dropna().unique())
 Nlist = np.sort(df['N'].dropna().unique())
@@ -57,12 +60,12 @@ for j,n in enumerate(nlist): # for each value of n and N, we plot a boxplot for 
         plt.figure()
         plt.title(r'$n = ' + str(int(n)) +  ', N = ' + str(int(N)) + '$')
         # ax = sns.histplot((df.loc[df['N'] == N])['theta_1'])
-        ax = sns.kdeplot(data = df_N, x = "theta_1", fill = True, alpha = 0.3, lw = 1.5)
-        ax.axvline(x = median_vals[0], ymin = 0, ymax = 1, ls = '--', lw = 1.5) 
+        ax = sns.kdeplot(data = df_N, x = "renorm_diff_1", fill = True, alpha = 0.3, lw = 1.5)
+        ax.axvline(x = median_vals[-2], ymin = 0, ymax = 1, ls = '--', lw = 1.5) 
         # sns.kdeplot(data = df_N, color = palette[1], fill = True, alpha = 0.3, lw = 1.5)
-        ax.axvline(x = data[0, 0], ymin = 0, ymax = 1, color = palette[1], lw = 1.5) 
-        ax.set_xlim([-2, 4])
-        ax.set_xlabel(r'$\theta_1$')
+        ax.axvline(x = 0, ymin = 0, ymax = 1, color = palette[1], lw = 1.5) 
+        ax.set_xlim([-15, 15])
+        ax.set_xlabel(r'$\sqrt{n}M^{1/2}(\widehat{\theta_1}-\theta_1)$')
         ax.set_ylabel("")
         #plt.savefig('kdeplot_theta_1_n' + n + '_N' + str(N) + '.png')
         plt.show()
@@ -70,12 +73,12 @@ for j,n in enumerate(nlist): # for each value of n and N, we plot a boxplot for 
         plt.figure()
         plt.title(r'$n = ' + str(int(n)) +  ', N = ' + str(int(N)) + '$')
         # ax = sns.histplot((df.loc[df['N'] == N])['theta_1'])
-        ax = sns.kdeplot(data = df_N, x = "theta_2", fill = True, alpha = 0.3, lw = 1.5)
-        ax.axvline(x = median_vals[1], ymin = 0, ymax = 1, ls='--', lw = 1.5) 
+        ax = sns.kdeplot(data = df_N, x = "renorm_diff_2", fill = True, alpha = 0.3, lw = 1.5)
+        ax.axvline(x = median_vals[-1], ymin = 0, ymax = 1, ls='--', lw = 1.5) 
         # sns.kdeplot(data = df_N, color = palette[1], fill = True, alpha = 0.3, lw = 1.5)
-        ax.axvline(x = data[0, 1], ymin = 0, ymax = 1, color = palette[1], lw = 1.5) 
-        ax.set_xlim([0, 1])
-        ax.set_xlabel(r'$\theta_2$')
+        ax.axvline(x = 0, ymin = 0, ymax = 1, color = palette[1], lw = 1.5) 
+        ax.set_xlim([-15, 15])
+        ax.set_xlabel(r'$\sqrt{n}M^{1/2}(\widehat{\theta_2}-\theta_2)$')
         ax.set_ylabel("")
         #plt.savefig('kdeplot_theta_2_n' + n + '_N' + str(N) + '.png')
         plt.show()

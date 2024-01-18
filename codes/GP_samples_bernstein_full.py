@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from math import comb
+from scipy.linalg import sqrtm
 
 from likelihood import *
 import kernel as ker
@@ -29,7 +30,7 @@ expName = "./data_samples/GP_samples_Bernstein/GP_samples_Bernstein_"
 combination_coeff = [[comb(i, k) for k in range(i+1)] for i in N]
 print("n = ", n)
 for k in range(np.size(N)):
-    results = np.zeros((nb_reps, 4))
+    results = np.zeros((nb_reps, 8))
     print("N = ", N[k])
     for l in range(nb_reps):
         if l % 100 == 0:
@@ -46,11 +47,12 @@ for k in range(np.size(N)):
         K0 = ker.kernel(param0, ker.dmatrix(f)) # covariance matrix
         np.random.seed(l)
         samples = ker.sample(0, K0, jitter, N=1)[:,0] # matrix with samples
+        M = np.sqrt(n)*np.real(sqrtm(ker.acov(2,f,0.001,param0)))
             
         # MLE
         opt_res = maximum_likelihood(param_init, param_lb, param_ub, [0, 1], jitter,
                                      ker.kernel, distf, samples, multistart, opt_method = "Powell")
-        results[l, :] = np.append(opt_res["hat_theta"], [n, N[k]])
+        results[l, :] = np.append(opt_res["hat_theta"], [M[0,0],M[0,1],M[1,0],M[1,1],n, N[k]])
         if verbose:
             print(results[l, :])
         
@@ -60,6 +62,6 @@ for k in range(np.size(N)):
             landscape(modified_log_likelihood, ker.kernel, distf, samples,
                       jitter, nbgrid, param0, param_lb, param_ub, opt_res["hat_theta"])
 
-    results = np.vstack((np.append(param0, [np.nan, np.nan]), results)) # stacking the ground truth params
+    results = np.vstack((np.append(param0, [np.nan, np.nan, np.nan, np.nan, np.nan, np.nan]), results)) # stacking the ground truth params
     np.save((expName  + "nbReps" + str(nb_reps) + "_n" + str(n) + "_N" + str(N[k])), results)
     # results_load = np.load((expName + "N" + str(N[k]) + ".npy"))
