@@ -8,7 +8,7 @@ import kernel as ker
 
 #Sampling parameters
 nb_reps = 1000                      # np of random replicates
-n = 80                              # nb of evaluations of the functional inputs
+n = 160                              # nb of evaluations of the functional inputs
 N = np.array([10, 20, 40, 80, 160]) # nb of basis functions used in the approximation
 d = 500                             # nb of points to approximate the L2 norm
 param0 = np.array([1., 0.5])        # GP covariance parameters
@@ -43,8 +43,9 @@ for k in range(np.size(N)):
         K0 = ker.kernel(param0, ker.dmatrix(f)) # covariance matrix
         np.random.seed(l)
         samples = ker.sample(0, K0, jitter, N=1)[:,0] # matrix with samples
-        M = np.sqrt(n)*np.real(sqrtm(ker.acov(2,f,0.0001,param0)))
-        
+        # M = np.sqrt(n)*np.real(sqrtm(ker.acov(2,f,0.0001,param0)))
+        M = np.real(sqrtm(ker.acov2(2, f, param0)))
+
         # MLE
         opt_res = maximum_likelihood(param_init, param_lb, param_ub, [0, 1], jitter,
                                      ker.kernel, distf, samples, multistart, opt_method = "Powell")

@@ -5,21 +5,31 @@ import kernel as ker
 
 #Sampling parameters
 nb_reps = 1000                      # np of random replicates
-tab_n = [10,20,40,80,160]           # nb of evaluations of the functional inputs
-N = np.array([10,20,40,80,160])     # nb of basis functions used in the approximation
+tab_n = [40]       # nb of evaluations of the functional inputs
+N = np.array([160]) # nb of basis functions used in the approximation
 param0 = np.array([1., 0.5])        # GP covariance parameters
 jitter = 1e-12                      # jitter to ensure numerical stability for inversions
 
-
-expName = "./data_samples/GP_samples/GP_samples_" 
-
+expIdx = 0
+if expIdx == 0:
+    expName = "./data_samples/GP_samples/GP_samples_" 
+elif expIdx == 1:
+    expName = "./data_samples/GP_samples_Bernstein/GP_samples_Bernstein_" 
+elif expIdx == 2:
+    expName = "./data_samples/GP_samples_rnd_sampling_time_indep/GP_samples_rnd_sampling_time_indep_" 
+elif expIdx == 3:
+    expName = "./data_samples/GP_samples_rnd_sampling_time_vary/GP_samples_rnd_sampling_time_vary_" 
 
 for n in tab_n:
     print("n = ", n)
     for k in range(np.size(N)):
         print("N = ", N[k])
         new_results = np.zeros((nb_reps+1, 8))
-    
+        param0[0] = param0[0]**2
+        new_results[0,:] = np.append(param0, [np.nan, np.nan, np.nan, np.nan, np.nan, np.nan])
+        results = np.load((expName  + "nbReps" + str(nb_reps) + "_n" + str(n) + "_N" + str(N[k])+ ".npy"))
+        results[:,0] = results[:,0]**2
+        
         for l in range(nb_reps):
             if l % 100 == 0:
                 print("Replicate:", l)
@@ -33,10 +43,12 @@ for n in tab_n:
         
             ## Generating covariance matrices
             distf = ker.dmatrix(f) # distances between functional inputs
-            M = np.sqrt(n)*np.real(sqrtm(ker.acov(2,f,0.0001,param0)))
+            # M = np.real(sqrtm(ker.acov(2,f,0.0001,param0)))
+            M = np.real(sqrtm(ker.acov2(2, f, param0)))
+            #print(M)
             
-            results = np.load((expName  + "nbReps" + str(nb_reps) + "_n" + str(n) + "_N" + str(N[k])+ ".npy"))
-            new_results[0] = np.append(param0, [np.nan, np.nan, np.nan, np.nan, np.nan, np.nan])
-            for i in range(1,new_results.shape[0]):
-                new_results[i] = np.concatenate((results[i,:2],[M[0,0],M[0,1],M[1,0],M[1,1],n, N[k]]))  
-            np.save((expName  + "nbReps" + str(nb_reps) + "_n" + str(n) + "_N" + str(N[k])), new_results)
+            new_results[l+1,:] = np.concatenate((results[l+1,:2],[M[0,0],M[0,1],M[1,0],M[1,1],n, N[k]]))            
+            if l % 100 == 0:
+                np.save((expName  + "nbReps" + str(nb_reps) + "_n" + str(n) + "_N" + str(N[k])), new_results)
+                
+        np.save((expName  + "nbReps" + str(nb_reps) + "_n" + str(n) + "_N" + str(N[k])), new_results)
