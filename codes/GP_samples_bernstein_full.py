@@ -47,8 +47,9 @@ for k in range(np.size(N)):
         K0 = ker.kernel(param0, ker.dmatrix(f)) # covariance matrix
         np.random.seed(l)
         samples = ker.sample(0, K0, jitter, N=1)[:,0] # matrix with samples
-        M = np.sqrt(n)*np.real(sqrtm(ker.acov(2,f,0.001,param0)))
-            
+        # M = np.sqrt(n)*np.real(sqrtm(ker.acov(2,f,0.001,param0)))
+        M = np.real(sqrtm(ker.acov2(2, f, param0)))
+  
         # MLE
         opt_res = maximum_likelihood(param_init, param_lb, param_ub, [0, 1], jitter,
                                      ker.kernel, distf, samples, multistart, opt_method = "Powell")
